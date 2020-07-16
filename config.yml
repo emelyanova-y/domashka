@@ -4,18 +4,27 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
-    executor: python/default
+  convert-Untitled: 
+      executor: python/default
     steps:
       - checkout
-      - python/load-cache
+      - restore_cache: 
+          key: dependencies     
       - python/install-deps
-      - python/save-cache
+      -save_cache:
+          key: dependencies
+          paths:
+            - "venv"
+      - run: echo 'export 
+      PATH=/home/circleci/.local/lib/python3.8/site-packages:$PATH' >> $BASH_ENV
       - run:
-          command: ./manage.py test
-          name: Test
-
-workflows:
+          name: Jupyter get HTML
+          command: 
+            jupyter nbconvert -execute -to html Untitled.ipynb 
+      - store_artifacts: 
+          path: ./Untitled.html
+          
+  workflows:
   main:
     jobs:
-      - build-and-test
+      - convert-Untitled
